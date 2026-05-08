@@ -1,0 +1,51 @@
+[package]
+name = "chainwatch-rs"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.91"
+license = "MIT OR Apache-2.0"
+description = "Blockchain intelligence and transaction monitoring platform for EVM chains"
+repository = "https://github.com/yablokolabs/chainwatch-rs"
+
+[dependencies]
+alloy = { version = "2.0.4", features = ["full", "reqwest-rustls-tls"] }
+anyhow = "1.0"
+async-trait = "0.1"
+axum = { version = "0.8.9", features = ["macros"] }
+chrono = { version = "0.4", features = ["clock", "serde"] }
+config_rs = { package = "config", version = "0.15" }
+dotenvy = "0.15"
+futures = "0.3"
+hex = "0.4"
+metrics = "0.24"
+metrics-exporter-prometheus = "0.18.3"
+opentelemetry = "0.31"
+opentelemetry-otlp = { version = "0.31.1", features = ["grpc-tonic"] }
+opentelemetry_sdk = { version = "0.31", features = ["rt-tokio"] }
+redis = { version = "0.32", features = ["tokio-comp", "connection-manager"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json", "migrate"] }
+thiserror = "2"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal", "time", "sync"] }
+tokio-util = "0.7"
+tower = { version = "0.5", features = ["limit", "timeout", "util"] }
+tower-http = { version = "0.6", features = ["cors", "request-id", "trace", "timeout", "util"] }
+tracing = "0.1"
+tracing-opentelemetry = "0.32.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+url = "2"
+uuid = { version = "1", features = ["v4", "serde"] }
+
+[dev-dependencies]
+http-body-util = "0.1"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+todo = "deny"
+unimplemented = "deny"
