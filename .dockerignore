@@ -5,3 +5,13 @@ target
 !.env.example
 .DS_Store
 *.log
+tests
+README.md
+SECURITY.md
+LICENSE-*
+CONTRIBUTING.md
+Makefile
+ops
+.github
+docker-compose.yml
+rustfmt.toml

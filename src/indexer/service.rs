@@ -13,7 +13,7 @@ use crate::{
     },
     config::IndexerSettings,
     domain::{
-        BlockNumber, Chain, ChainId, ChainwatchError, DecodedEvent, DecodedEventKind, FetchedBlock,
+        BlockNumber, Chain, ChainwatchError, DecodedEvent, DecodedEventKind, FetchedBlock,
         IndexerState, Result, TokenTransfer,
         codec::{parse_address, parse_u256},
     },
@@ -276,9 +276,4 @@ fn decoded_event_to_transfer(event: &DecodedEvent) -> Option<Result<TokenTransfe
 fn next_delay(current: Duration, max: Duration) -> Duration {
     let doubled = current.checked_mul(2).unwrap_or(max);
     doubled.min(max)
-}
-
-#[allow(dead_code)]
-fn _chain_id_for_docs(chain_id: ChainId) -> ChainId {
-    chain_id
 }

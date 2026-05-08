@@ -37,7 +37,7 @@ jobs:
       CHAINWATCH__EVM__CHAIN_ID_OVERRIDE: "1"
       RUSTFLAGS: -D warnings
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
       - name: Format
@@ -48,3 +48,18 @@ jobs:
         run: cargo test --all-features
       - name: Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t chainwatch-rs:ci .

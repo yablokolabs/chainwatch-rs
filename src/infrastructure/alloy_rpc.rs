@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use alloy::primitives::{Address, B256, U256};
+use alloy::primitives::{Address, B256};
 use alloy::providers::{DynProvider, Provider, ProviderBuilder};
 use async_trait::async_trait;
 use futures::{StreamExt, TryStreamExt};
@@ -291,13 +291,4 @@ fn parse_value_address(value: &Value, field: &str) -> Result<Address> {
         .as_str()
         .ok_or_else(|| ChainwatchError::Rpc(format!("address field `{field}` is not a string")))
         .and_then(parse_address)
-}
-
-#[allow(dead_code)]
-fn parse_hex_u256_field(value: &Value, field: &str) -> Result<U256> {
-    value
-        .get(field)
-        .and_then(Value::as_str)
-        .ok_or_else(|| ChainwatchError::Rpc(format!("missing U256 field `{field}`")))
-        .and_then(parse_u256)
 }

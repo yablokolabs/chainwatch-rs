@@ -9,8 +9,7 @@ use crate::{
     config::DatabaseSettings,
     domain::{
         Alert, AlertSeverity, Block, BlockNumber, Chain, ChainId, ChainwatchError, DecodedEvent,
-        DecodedEventKind, IndexerState, Page, RawLog, Result, TokenTransfer, Transaction,
-        WatchlistEntry,
+        IndexerState, Page, RawLog, Result, TokenTransfer, Transaction, WatchlistEntry,
         codec::{
             address_to_hex, checked_i64, checked_u64, hash_to_hex, parse_address, parse_hash,
             parse_u256, u256_to_decimal,
@@ -702,16 +701,5 @@ impl Repository for PostgresRepository {
         .fetch_one(&self.pool)
         .await?;
         checked_u64(row.0, "transfer_count")
-    }
-}
-
-#[allow(dead_code)]
-fn decoded_event_kind_from_db(value: &str) -> Result<DecodedEventKind> {
-    match value {
-        "erc20_transfer" => Ok(DecodedEventKind::Erc20Transfer),
-        "erc20_approval" => Ok(DecodedEventKind::Erc20Approval),
-        other => Err(ChainwatchError::Validation(format!(
-            "unknown decoded event kind `{other}`"
-        ))),
     }
 }

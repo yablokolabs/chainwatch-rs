@@ -1,6 +1,5 @@
 use std::{sync::Arc, time::Instant};
 
-use alloy::primitives::{Address, B256};
 use axum::{
     Json, Router,
     body::Body,
@@ -19,7 +18,7 @@ use tower_http::{
     timeout::TimeoutLayer,
     trace::TraceLayer,
 };
-use tracing::instrument;
+use tracing::{error, instrument};
 
 use crate::{
     application::{ports::Repository, services::build_watchlist_entry},
@@ -436,34 +435,29 @@ impl From<ChainwatchError> for ApiError {
 
 impl IntoResponse for ApiError {
     fn into_response(self) -> Response {
-        let status = match self.0 {
-            ChainwatchError::Validation(_) => StatusCode::BAD_REQUEST,
-            ChainwatchError::NotFound(_) => StatusCode::NOT_FOUND,
-            ChainwatchError::RateLimited => StatusCode::TOO_MANY_REQUESTS,
-            ChainwatchError::Config(_)
-            | ChainwatchError::Database(_)
-            | ChainwatchError::Migration(_)
-            | ChainwatchError::Rpc(_)
-            | ChainwatchError::Decode(_)
-            | ChainwatchError::ReorgDetected { .. }
-            | ChainwatchError::Risk(_)
-            | ChainwatchError::InvalidAddress { .. }
-            | ChainwatchError::Internal(_) => StatusCode::INTERNAL_SERVER_ERROR,
+        let (status, message) = match &self.0 {
+            ChainwatchError::Validation(msg) => (StatusCode::BAD_REQUEST, msg.clone()),
+            ChainwatchError::InvalidAddress { address, reason } => (
+                StatusCode::BAD_REQUEST,
+                format!("invalid address {address}: {reason}"),
+            ),
+            ChainwatchError::NotFound(msg) => (StatusCode::NOT_FOUND, msg.clone()),
+            ChainwatchError::RateLimited => (
+                StatusCode::TOO_MANY_REQUESTS,
+                "rate limit exceeded".to_owned(),
+            ),
+            other => {
+                error!(error = %other, "internal api error");
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "internal server error".to_owned(),
+                )
+            }
         };
         let body = Json(serde_json::json!({
-            "error": self.0.to_string(),
+            "error": message,
             "status": status.as_u16()
         }));
         (status, body).into_response()
     }
-}
-
-#[allow(dead_code)]
-fn _validate_hash(hash: B256) -> B256 {
-    hash
-}
-
-#[allow(dead_code)]
-fn _validate_address(address: Address) -> Address {
-    address
 }
